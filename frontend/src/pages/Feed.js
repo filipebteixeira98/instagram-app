@@ -15,9 +15,19 @@ class Feed extends Component {
   };
 
   async componentDidMount() {
-    const response = await api.get('posts');
+    const response = await api.get('/posts');
 
     this.setState({ feed: response.data });
+  }
+
+  async handleLikePost(postId) {
+    await api.post(`/posts/${postId}/like`);
+
+    this.setState(prevState => ({
+      feed: prevState.feed.map(post =>
+        post._id === postId ? { ...post, likes: post.likes + 1 } : post
+      )
+    }));
   }
 
   render() {
@@ -30,21 +40,16 @@ class Feed extends Component {
                 <span>{post.author}</span>
                 <span className='place'>{post.place}</span>
               </div>
-
               <img src={more} alt='More' />
             </header>
-
             <img src={`http://localhost:3333/files/${post.image}`} alt='' />
-
             <footer>
               <div className='actions'>
-                <img src={like} alt='' />
+                <img src={like} alt='' onClick={() => this.handleLikePost(post._id)} />
                 <img src={comment} alt='' />
                 <img src={send} alt='' />
               </div>
-
-              <strong>{post.likes} likes</strong>
-
+              <strong>{post.likes} like{post.likes > 1 ? 's' : ''}</strong>
               <p>
                 {post.description}
                 <span>{post.hashtags}</span>
