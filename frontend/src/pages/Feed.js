@@ -6,6 +6,7 @@ import './Feed.css';
 
 import more from '../assets/more.svg';
 import like from '../assets/like.svg';
+import likeFilled from '../assets/like-filled.svg';
 import comment from '../assets/comment.svg';
 import send from '../assets/send.svg';
 
@@ -23,11 +24,25 @@ class Feed extends Component {
   async handleLikePost(postId) {
     await api.post(`/posts/${postId}/like`);
 
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+
+    if (!likedPosts.includes(postId)) {
+      likedPosts.push(postId);
+
+      localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+    }
+
     this.setState(prevState => ({
       feed: prevState.feed.map(post =>
         post._id === postId ? { ...post, likes: post.likes + 1 } : post
       )
     }));
+  }
+
+  isPostLiked(postId) {
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+
+    return likedPosts.includes(postId);
   }
 
   render() {
@@ -45,7 +60,13 @@ class Feed extends Component {
             <img src={`http://localhost:3333/files/${post.image}`} alt='' />
             <footer>
               <div className='actions'>
-                <img src={like} alt='' onClick={() => this.handleLikePost(post._id)} />
+                <span onClick={() => this.handleLikePost(post._id)}>
+                  {this.isPostLiked(post._id) ? (
+                    <img src={likeFilled} alt='Liked' />
+                  ) : (
+                    <img src={like} alt='Like' />
+                  )}
+                </span>
                 <img src={comment} alt='' />
                 <img src={send} alt='' />
               </div>
