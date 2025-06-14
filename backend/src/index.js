@@ -6,16 +6,18 @@ const cors = require('cors');
 const app = express();
 
 const server = require('http').Server(app);
+
 const io = require('socket.io')(server);
 
-mongoose.connect('mongodb+srv://admin:admin@cluster0-9zk5t.mongodb.net/test?retryWrites=true&w=majority', {
-    useNewUrlParser: true
+mongoose.connect('mongodb+srv://admin:admin@cluster0.ous9j0r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 app.use((req, res, next) => {
-    req.io = io;
+  req.io = io;
 
-    next();
+  next();
 })
 
 app.use(cors());
