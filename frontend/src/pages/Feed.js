@@ -22,15 +22,17 @@ class Feed extends Component {
   }
 
   async handleLikePost(postId) {
-    await api.post(`/posts/${postId}/like`);
-
     const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
 
-    if (!likedPosts.includes(postId)) {
-      likedPosts.push(postId);
-
-      localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+    if (likedPosts.includes(postId)) {
+      return;
     }
+
+    await api.post(`/posts/${postId}/like`);
+
+    likedPosts.push(postId);
+
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
 
     this.setState(prevState => ({
       feed: prevState.feed.map(post =>
