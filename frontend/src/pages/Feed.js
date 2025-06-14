@@ -22,23 +22,33 @@ class Feed extends Component {
   }
 
   async handleLikePost(postId) {
-    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+    let likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
 
-    if (likedPosts.includes(postId)) {
-      return;
+    const isLiked = likedPosts.includes(postId);
+
+    if (isLiked) {
+      likedPosts = likedPosts.filter(id => id !== postId);
+
+      localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+
+      this.setState(prevState => ({
+        feed: prevState.feed.map(post =>
+          post._id === postId ? { ...post, likes: post.likes - 1 } : post
+        )
+      }));
+    } else {
+      await api.post(`/posts/${postId}/like`);
+
+      likedPosts.push(postId);
+
+      localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+
+      this.setState(prevState => ({
+        feed: prevState.feed.map(post =>
+          post._id === postId ? { ...post, likes: post.likes + 1 } : post
+        )
+      }));
     }
-
-    await api.post(`/posts/${postId}/like`);
-
-    likedPosts.push(postId);
-
-    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
-
-    this.setState(prevState => ({
-      feed: prevState.feed.map(post =>
-        post._id === postId ? { ...post, likes: post.likes + 1 } : post
-      )
-    }));
   }
 
   isPostLiked(postId) {
