@@ -28,7 +28,9 @@ class New extends Component {
 
     data.append('hashtags', this.state.hashtags);
 
-    await api.post('posts', data);
+    await api.post('/posts', data);
+
+    this.props.history.push('/');
   }
 
   handleImageChange = e => {
@@ -42,7 +44,7 @@ class New extends Component {
   render() {
     return (
       <form id='new-post' onSubmit={this.handleSubmit}>
-        <input type='file' onChange={() => this.handleImageChange()} />
+        <input type='file' onChange={this.handleImageChange} />
         <input
           type='text'
           name='author'
@@ -71,6 +73,7 @@ class New extends Component {
           onChange={this.handleChange}
           value={this.state.hashtags}
         />
+        <button type='submit'>Post</button>
       </form>
     );
   }
