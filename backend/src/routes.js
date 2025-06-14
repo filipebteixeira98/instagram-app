@@ -16,4 +16,6 @@ routes.post('/posts', upload.single('image'), PostController.store);
 
 routes.post('/posts/:id/like', LikeController.store);
 
+routes.put('/posts/:id/dislike', LikeController.destroy);
+
 module.exports = routes;

@@ -27,6 +27,8 @@ class Feed extends Component {
     const isLiked = likedPosts.includes(postId);
 
     if (isLiked) {
+      await api.put(`/posts/${postId}/dislike`);
+
       likedPosts = likedPosts.filter(id => id !== postId);
 
       localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
